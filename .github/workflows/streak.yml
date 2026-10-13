@@ -27,14 +27,26 @@ jobs:
         run: |
           git pull --rebase origin main
 
-      - name: Update File
+      - name: Generate Random Commit Count
+        id: random
         run: |
-          echo "Last update: $(date -u)" > streak.txt
+          COUNT=$(( RANDOM % 6 + 1 ))
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "Today's commit count: $COUNT"
 
-      - name: Commit and Push
+      - name: Make Random Commits
         run: |
-          git add streak.txt
+          COUNT=${{ steps.random.outputs.count }}
 
-          git commit -m "Daily streak update $(date -u +'%Y-%m-%d')" || exit 0
+          for i in $(seq 1 "$COUNT"); do
+            echo "Update $i on $(date -u)" >> streak.txt
 
-          git push origin main
+            git add streak.txt
+            git commit -m "Daily streak update $(date -u +'%Y-%m-%d %H:%M:%S')"
+
+            git push origin main
+
+            if [ "$i" -lt "$COUNT" ]; then
+              sleep $(( RANDOM % 60 + 10 ))
+            fi
+          done
