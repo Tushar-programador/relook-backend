@@ -30,7 +30,7 @@ jobs:
       - name: Generate Random Commit Count
         id: random
         run: |
-          COUNT=$(( RANDOM % 6 + 1 ))
+          COUNT=$(( RANDOM % 9 + 1 ))
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
           echo "Today's commit count: $COUNT"
 
